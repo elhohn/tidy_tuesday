@@ -77,7 +77,7 @@ ggplot(top_tens_last20yrs, aes(x = week_ending, y = weekly_rank, group = theatre
   theme(plot.margin = margin(5.5, 60, 5.5, 5.5),
         legend.position = 'none')
 
-
+# try an animated tile map a la 
   
 
 
