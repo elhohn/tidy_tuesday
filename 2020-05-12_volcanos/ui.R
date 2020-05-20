@@ -47,7 +47,8 @@ fluidPage(
                             2020,
                             value = 2020,
                             step = 100,
-                            animate = TRUE),
+                            animate = animationOptions(interval = 1000,
+                                                       loop = TRUE)),
                 tags$script("$(document).ready(function(){
                         setTimeout(function() {$('.slider-animate-button').click()},10);
                     });")

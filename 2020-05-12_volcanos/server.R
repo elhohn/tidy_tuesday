@@ -39,8 +39,16 @@ shinyServer(function(input, output, session) {
   }
   )
   
+  observeEvent(input$year, {
+    if (input$year == 0) {
+    leafletProxy('map') %>%
+      clearMarkers()
+    }
+  }
+  )
+  
   output$yearText <- renderText({ 
-    print(paste("Year: ", input$year))
+    print(paste("Year: ", input$year, " A.D."))
     })
   
 }
