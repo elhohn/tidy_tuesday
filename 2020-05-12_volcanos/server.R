@@ -18,9 +18,10 @@ shinyServer(function(input, output, session) {
     #spdf[spdf@data$start_year==input$year,]
   })
   
+  
   output$map <- renderLeaflet({
     leaflet() %>%
-      setView(lng = 23.434077, lat = 34.127021, zoom = 2) %>%
+      setView(lng = 23.434077, lat = 14.127021, zoom = 3) %>%
       addProviderTiles(providers$NASAGIBS.ViirsEarthAtNight2012) %>%
       addLegend('topright',
                 pal = pal,

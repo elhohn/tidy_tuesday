@@ -31,7 +31,7 @@ fluidPage(
   
   
   
-  leafletOutput("map", width = "100%", height = '800px'),
+  leafletOutput("map", width = "100%", height = '1200px'),
   absolutePanel(id = "title", #class = "panel panel-default", 
                 fixed = TRUE,
                 draggable = FALSE, 
