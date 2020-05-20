@@ -33,12 +33,15 @@ shinyServer(function(input, output, session) {
     leafletProxy('map', data = points()) %>%
       addCircleMarkers(data = points(),
                        radius = ~vei*4,
-                       #color = 'transparent',
                        color = ~pal(vei)
-                       #fillOpacity = 0.2
       )
   }
   )
+  
+  output$yearText <- renderText({ 
+    print(paste("Year: ", input$year))
+    })
+  
 }
 )
 
