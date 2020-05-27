@@ -33,7 +33,7 @@ shinyServer(function(input, output, session) {
   observeEvent(points(), {
     leafletProxy('map', data = points()) %>%
       addCircleMarkers(data = points(),
-                       radius = ~vei*4,
+                       radius = ~vei*10,
                        color = ~pal(vei)
       )
   }

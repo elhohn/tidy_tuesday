@@ -24,7 +24,7 @@ fluidPage(
                           font-family: 'Quicksand';
                           font-weight: 200;
                           line-height: 1.1;
-                          font-size: 30px;
+                          font-size: 50px;
                }"
                )
     ),
@@ -37,12 +37,12 @@ fluidPage(
                 draggable = FALSE, 
                 top = 50, left = 80, right = 'auto', bottom = "auto",
                 width = 800,
-                h2('Volcanic Eruptions in last 2000 years')
+                h2('Volcano Eruptions in last 2020 years')
   ),
   absolutePanel(id = "slider", #class = "panel panel-default", 
                 fixed = TRUE,
                 draggable = TRUE, 
-                right = 500, bottom = 50, top = 'auto', left = 'auto', 
+                right = 'auto', bottom = 50, top = 'auto', left = 80, 
                 sliderInput("year", "Eruption Year", 0, 
                             2020,
                             value = 2020,
