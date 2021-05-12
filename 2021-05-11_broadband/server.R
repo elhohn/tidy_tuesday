@@ -7,43 +7,21 @@ library(ggplot2)
 library(plotly)
 options(tigris_use_cache = TRUE)
 
-## Get the dater
-tuesdata <- tidytuesdayR::tt_load('2021-05-11')
-
-# note: bb availability from end of 2017; usage from Nov 2019
-bb <- tuesdata$broadband
-
-# usage from Nov 2020
-zips <- tuesdata$broadband_zip
-zips <- as.data.frame(zips[zips$ST == 'OR',])
-zips$zip <- as.character(zips$`POSTAL CODE`)
-zips$bb_use <- as.numeric(zips$`BROADBAND USAGE`)
-
-# zip code level income data
-income <- read.csv('data/income_zip.csv')
-zips <- merge(zips, income, by.x = "COUNTY ID", by.y = 'Zip')
-
-## Download zip code level shapefile from TIGRIS
-geo <- zctas(cb = TRUE, starts_with = zips$zip)
-
-# join zip boundaries and broadband data 
-dater <- geo_join(geo, 
-                  zips, 
-                  by_sp = "GEOID10", 
-                  by_df = "zip",
-                  how = "left")
+# Load data (prepped with data_prep.R)
+bb_df <- readRDS('data/bb_df.Rds')
+bb_sp <- readRDS('data/bb_sp.Rds')
 
 pal <- colorNumeric(
   palette = "Greens",
-  domain = dater$`BROADBAND USAGE`)
+  domain = bb_sp$`BROADBAND USAGE`)
 
 # create labels for zipcodes
 labels <- 
   paste0(
     "Zip Code: ",
-    dater$GEOID10, "<br/>",
+    bb_sp$GEOID10, "<br/>",
     "Broadband Usage: ",
-    dater$`BROADBAND USAGE`) %>%
+    bb_sp$`BROADBAND USAGE`) %>%
   lapply(htmltools::HTML)
 
 
@@ -51,13 +29,13 @@ server <- function(input, output) {
   
   ######## MAP ##########
   output$map <- renderLeaflet({
-    dater %>% 
+    bb_sp %>% 
       leaflet %>% 
       # add base map
       addProviderTiles("CartoDB") %>% 
       setView(-122.675, 45.519, zoom = 10) %>%
       # add zip codes
-      addPolygons(fillColor = ~pal(bb_use),
+      addPolygons(fillColor = ~pal(`BROADBAND USAGE`),
                   weight = 2,
                   opacity = 1,
                   color = "white",
@@ -70,11 +48,10 @@ server <- function(input, output) {
                                                bringToFront = TRUE),
                   label = labels) %>%
       addLegend(pal = pal, 
-                values = ~bb_use, 
+                values = ~`BROADBAND USAGE`, 
                 opacity = 0.7, 
                 title = htmltools::HTML("Broadband usage <br> 
-                                    by Zip Code <br>
-                                    2018"),
+                                    by Zip Code"),
                 position = "bottomright")
   })
   
@@ -82,7 +59,7 @@ server <- function(input, output) {
   ######## TABLE ##########
   output$table <- renderReactable({
     tbl <- reactable(
-      dater,
+      bb_df,
       selection = "multiple",
       onClick = "select",
       rowStyle = list(cursor = "pointer"),
@@ -96,7 +73,8 @@ server <- function(input, output) {
   ######### PLOT ##########
   output$plot <- renderPlotly({
     
-    p <- ggplot(dater, aes(x = Pop, y = bb_use, color = bb_use)) +
+    p <- ggplot(bb_df, aes(x = Median, y = `BROADBAND USAGE`,
+                           color = `BROADBAND USAGE`, size = Pop)) +
       geom_point(size = 6, alpha = 0.5)
     
     ggplotly(p)
