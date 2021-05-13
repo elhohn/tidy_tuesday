@@ -35,7 +35,7 @@ saveRDS(bb_sp, file = "data/bb_sp.rds")
 # A regular data frame (without coordinates) for the table and plots.
 # Use the same group name as the map data.
 bb_df <- as_tibble(d3) %>%
-  select(zip, ST, `COUNTY NAME`, `BROADBAND USAGE`, Median, Pop) %>%
-  SharedData$new(group = "broadband")
+  select(zip, ST, `COUNTY NAME`, `BROADBAND USAGE`, Median, Pop) #%>%
+  #SharedData$new(group = "broadband")
 saveRDS(bb_df, file = "data/bb_df.rds")
 

@@ -5,6 +5,7 @@ library(tigris)
 library(leaflet)
 library(ggplot2)
 library(plotly)
+library(shinyjs)
 options(tigris_use_cache = TRUE)
 
 # Load data (prepped with data_prep.R)
@@ -19,7 +20,7 @@ pal <- colorNumeric(
 labels <- 
   paste0(
     "Zip Code: ",
-    bb_sp$GEOID10, "<br/>",
+    bb_sp$zip, "<br/>",
     "Broadband Usage: ",
     bb_sp$`BROADBAND USAGE`) %>%
   lapply(htmltools::HTML)
@@ -58,12 +59,41 @@ server <- function(input, output) {
   
   ######## TABLE ##########
   output$table <- renderReactable({
+    d <- cbind(zoom = NA, bb_df)
+    d <- d %>% SharedData$new(group = "broadband")
+    
+    sticky_style <- list(position = "sticky", left = 0, background = "#fff", zIndex = 1,
+                         borderRight = "1px solid #eee")
+    
     tbl <- reactable(
-      bb_df,
+      d,
       selection = "multiple",
-      onClick = "select",
+      #onClick = "select",
       rowStyle = list(cursor = "pointer"),
-      minRows = 10
+      minRows = 10,
+      columns = list(
+        zoom = colDef(
+          align = "center",
+          minWidth = 120,
+          name = "",
+          style = sticky_style,
+          headerStyle = sticky_style,
+          sortable = FALSE,
+          cell = function() htmltools::tags$button("GO TO FIELD",
+                                                   class="btn-zoom")
+        )
+      ),
+      onClick = JS("function(rowInfo, colInfo) {
+                        // Only handle click events on the 'zoom' column
+                        if (colInfo.id !== 'zoom') {
+                          return
+                        }
+                        // Send the click event to Shiny, which will be available in input$clicked_field
+                        // Note that the row index starts at 0 in JavaScript, so we add 1
+                        if (window.Shiny) {
+                          Shiny.setInputValue('clicked_field', { index: rowInfo.index + 1 }, { priority: 'event' })
+                        }
+                      }")
     )
     
     tbl
@@ -72,8 +102,8 @@ server <- function(input, output) {
   
   ######### PLOT ##########
   output$plot <- renderPlotly({
-    
-    p <- ggplot(bb_df, aes(x = Median, y = `BROADBAND USAGE`,
+    d <- bb_df %>% SharedData$new(group = "broadband")
+    p <- ggplot(d, aes(x = Median, y = `BROADBAND USAGE`,
                            color = `BROADBAND USAGE`, size = Pop)) +
       geom_point(size = 6, alpha = 0.5)
     
