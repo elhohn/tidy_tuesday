@@ -21,15 +21,16 @@ d2 <- d %>%
 
 # Download zip code level shapefile from TIGRIS
 geo <- zctas(cb = TRUE, starts_with = as.character(d2$zip)) %>%
-  mutate(zip = as.integer(GEOID10))
+  mutate(zip = as.integer(GEOID10)) %>%
+  sf::st_transform(4326)
 
 # join zip boundaries and broadband data 
 d3 <- geo_join(geo, d2, by_sp = "zip", by_df = "zip", how = "left")
 
 # spatial points dataframe for map
 bb_sp <- d3 %>%
-  select(zip, ST, `COUNTY NAME`, `BROADBAND USAGE`, Median, Pop, geometry) %>%
-  SharedData$new(group = "broadband")
+  select(zip, ST, `COUNTY NAME`, `BROADBAND USAGE`, Median, Pop, geometry) #%>%
+  #SharedData$new(group = "broadband")
 saveRDS(bb_sp, file = "data/bb_sp.rds")
 
 # A regular data frame (without coordinates) for the table and plots.

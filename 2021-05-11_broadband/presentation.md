@@ -36,10 +36,11 @@ Easy interactivity
 ========================================================
 <iframe src="demo.html" style="position:absolute;height:200%;width:200%"></iframe>
 
-{htmlwidgets} - 
+Demo
 ========================================================
-
-![plot of chunk unnamed-chunk-2](presentation-figure/unnamed-chunk-2-1.png)
+- Use {crosstalk} with {plotly} and {reactable} to link brushing and filtering between table and plot
+- Use {htmlwidgets} to add a custom javascript function
+that allows table and map interaction
 
 Example 1 - 
 ========================================================
