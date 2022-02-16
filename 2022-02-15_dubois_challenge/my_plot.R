@@ -55,5 +55,5 @@ p <- ggplot(d) +
   annotate('text', label = "FINANCIAL PANIC.", x = 1894, y = 8e5, angle = 90, lineheight = .8,
            size = 3.5, family = "Jefferies", color = '#373535', alpha = 0.6)
 
-ggsave('my_plot.tiff', p, device = "tiff", dpi = 300)
+ggsave('my_plot.tiff', p, device = "tiff", dpi = 500)
 
